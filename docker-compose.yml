@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: cora-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: cora
+      POSTGRES_PASSWORD: cora
+      POSTGRES_DB: projeto_cora
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - nest-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cora-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://cora:cora@postgres:5432/projeto_cora
+      NODE_ENV: production
+    depends_on:
+      - postgres
+    networks:
+      - nest-network
+    command: sh -c "npx prisma migrate deploy && npm run start:prod"
+
+volumes:
+  postgres_data:
+
+networks:
+  nest-network:
+    driver: bridge
