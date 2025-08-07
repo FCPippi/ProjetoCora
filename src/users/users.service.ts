@@ -40,7 +40,6 @@ export class UsersService {
     id: number,
     updateUserDto: UpdateUserDto
   ): Promise<UserResponseDto> {
-    // Verifica se o usuário existe
     await this.findOne(id);
 
     const updatedUser = await this.prisma.user.update({
@@ -52,7 +51,6 @@ export class UsersService {
   }
 
   async remove(id: number): Promise<void> {
-    // Verifica se o usuário existe
     await this.findOne(id);
 
     await this.prisma.user.delete({
