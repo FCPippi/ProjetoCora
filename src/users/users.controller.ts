@@ -2,20 +2,22 @@ import {
   Controller,
   Get,
   Param,
-  Post,
   Body,
   Put,
   Delete,
   ParseIntPipe,
   HttpStatus,
   HttpCode,
+  UseGuards,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UserResponseDto } from "./dto/user-response.dto";
+import { JwtAuthGuard } from "../auth/jwt-auth.guard";
+import { GetUserId } from "../auth/get-user.decorator";
 
 @Controller("users")
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -31,25 +33,17 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  async createUser(
-    @Body() createUserDto: CreateUserDto
-  ): Promise<UserResponseDto> {
-    return this.usersService.create(createUserDto);
-  }
-
-  @Put(":id")
-  async updateUser(
-    @Param("id", ParseIntPipe) id: number,
+  @Put("profile")
+  async updateProfile(
+    @GetUserId() userId: number,
     @Body() updateUserDto: UpdateUserDto
   ): Promise<UserResponseDto> {
-    return this.usersService.update(id, updateUserDto);
+    return this.usersService.update(userId, updateUserDto);
   }
 
-  @Delete(":id")
+  @Delete("profile")
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteUser(@Param("id", ParseIntPipe) id: number): Promise<void> {
-    await this.usersService.remove(id);
+  async deleteProfile(@GetUserId() userId: number): Promise<void> {
+    return this.usersService.remove(userId);
   }
 }

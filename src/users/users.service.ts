@@ -3,6 +3,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UserResponseDto } from "./dto/user-response.dto";
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -13,6 +14,13 @@ export class UsersService {
       orderBy: {
         createdAt: "desc",
       },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
     return users;
   }
@@ -20,6 +28,13 @@ export class UsersService {
   async findOne(id: number): Promise<UserResponseDto> {
     const user = await this.prisma.user.findUnique({
       where: { id },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
     if (!user) {
@@ -29,32 +44,41 @@ export class UsersService {
     return user;
   }
 
-  async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
-    const user = await this.prisma.user.create({
-      data: createUserDto,
-    });
-    return user;
-  }
-
   async update(
-    id: number,
+    userId: number,
     updateUserDto: UpdateUserDto
   ): Promise<UserResponseDto> {
-    await this.findOne(id);
+    await this.findOne(userId);
+
+    const { password, ...userData } = updateUserDto;
+    let updateData: any = userData;
+
+    if (password) {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      updateData = { ...userData, password: hashedPassword };
+    }
 
     const updatedUser = await this.prisma.user.update({
-      where: { id },
-      data: updateUserDto,
+      where: { id: userId },
+      data: updateData,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
     return updatedUser;
   }
 
-  async remove(id: number): Promise<void> {
-    await this.findOne(id);
+  async remove(userId: number): Promise<void> {
+    await this.findOne(userId);
 
     await this.prisma.user.delete({
-      where: { id },
+      where: { id: userId },
     });
   }
 }
