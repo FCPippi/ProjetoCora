@@ -1,6 +1,10 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class CreateUserDto {
+export class BoilerplateUserDto {
+  @IsString()
+  @IsNotEmpty()
+  id: string;
+
   @IsEmail()
   @IsNotEmpty()
   email: string;
