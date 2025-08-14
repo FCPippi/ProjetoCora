@@ -22,7 +22,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@GetUser() user: any) {
+  getProfile(@GetUser() user: AuthResponseDto): AuthResponseDto {
     return user;
   }
 }

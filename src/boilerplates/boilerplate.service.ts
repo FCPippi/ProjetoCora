@@ -20,7 +20,11 @@ export class BoilerplateService {
     return users;
   }
 
-  async postMethod({ name, email }: BoilerplateUserDto): Promise<HttpStatus> {
+  async postMethod({
+    name,
+    email,
+    password,
+  }: BoilerplateUserDto): Promise<HttpStatus> {
     let user: User | null = await this.prisma.user.findUnique({
       where: { email },
     });
@@ -33,6 +37,7 @@ export class BoilerplateService {
       data: {
         name,
         email,
+        password,
       },
     });
 

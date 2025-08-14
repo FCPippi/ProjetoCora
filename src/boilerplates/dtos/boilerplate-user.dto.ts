@@ -1,4 +1,12 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
+
+const MIN_PASSWORD_LENGTH = 6;
 
 export class BoilerplateUserDto {
   @IsString()
@@ -12,4 +20,11 @@ export class BoilerplateUserDto {
   @IsString()
   @IsOptional()
   name?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(MIN_PASSWORD_LENGTH, {
+    message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters long`,
+  })
+  password: string;
 }

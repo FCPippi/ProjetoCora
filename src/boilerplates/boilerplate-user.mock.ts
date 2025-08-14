@@ -5,6 +5,7 @@ export function mockBoilerplateUser({ name, email }: Partial<User>): User {
     id: 'b60b728d450146a1bbb4836ed61c93c7',
     name: name || 'John Doe',
     email: email || 'John.doe@domain.com',
+    password: 'mockPassword123',
     createdAt: new Date(),
     updatedAt: new Date(),
   };

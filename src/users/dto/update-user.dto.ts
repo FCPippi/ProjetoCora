@@ -1,5 +1,7 @@
 import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
 
+const MIN_PASSWORD_LENGTH = 6;
+
 export class UpdateUserDto {
   @IsEmail()
   @IsOptional()
@@ -11,6 +13,6 @@ export class UpdateUserDto {
 
   @IsString()
   @IsOptional()
-  @MinLength(6)
+  @MinLength(MIN_PASSWORD_LENGTH)
   password?: string;
 }

@@ -35,7 +35,7 @@ export class UsersController {
 
   @Put('profile')
   async updateProfile(
-    @GetUserId() userId: number,
+    @GetUserId() userId: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
     return this.usersService.update(userId, updateUserDto);
@@ -43,7 +43,7 @@ export class UsersController {
 
   @Delete('profile')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteProfile(@GetUserId() userId: number): Promise<void> {
+  async deleteProfile(@GetUserId() userId: string): Promise<void> {
     return this.usersService.remove(userId);
   }
 }
