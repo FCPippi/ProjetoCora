@@ -9,13 +9,13 @@ import {
   ParseIntPipe,
   HttpStatus,
   HttpCode,
-} from "@nestjs/common";
-import { UsersService } from "./users.service";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import { UserResponseDto } from "./dto/user-response.dto";
+} from '@nestjs/common';
+import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserResponseDto } from './dto/user-response.dto';
 
-@Controller("users")
+@Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -24,9 +24,9 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(":id")
+  @Get(':id')
   async getUserById(
-    @Param("id", ParseIntPipe) id: number
+    @Param('id', ParseIntPipe) id: string,
   ): Promise<UserResponseDto> {
     return this.usersService.findOne(id);
   }
@@ -34,22 +34,22 @@ export class UsersController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createUser(
-    @Body() createUserDto: CreateUserDto
+    @Body() createUserDto: CreateUserDto,
   ): Promise<UserResponseDto> {
     return this.usersService.create(createUserDto);
   }
 
-  @Put(":id")
+  @Put(':id')
   async updateUser(
-    @Param("id", ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto
+    @Param('id', ParseIntPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @Delete(":id")
+  @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteUser(@Param("id", ParseIntPipe) id: number): Promise<void> {
+  async deleteUser(@Param('id', ParseIntPipe) id: string): Promise<void> {
     await this.usersService.remove(id);
   }
 }
