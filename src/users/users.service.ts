@@ -1,8 +1,7 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { PrismaService } from "../prisma/prisma.service";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import { UserResponseDto } from "./dto/user-response.dto";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserResponseDto } from './dto/user-response.dto';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
@@ -12,7 +11,7 @@ export class UsersService {
   async findAll(): Promise<UserResponseDto[]> {
     const users = await this.prisma.user.findMany({
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
       select: {
         id: true,
@@ -22,10 +21,13 @@ export class UsersService {
         updatedAt: true,
       },
     });
-    return users;
+    return users.map((user) => ({
+      ...user,
+      id: user.id.toString(),
+    }));
   }
 
-  async findOne(id: number): Promise<UserResponseDto> {
+  async findOne(id: string): Promise<UserResponseDto> {
     const user = await this.prisma.user.findUnique({
       where: { id },
       select: {
@@ -41,17 +43,17 @@ export class UsersService {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    return user;
+    return { ...user, id: user.id.toString() };
   }
 
   async update(
-    userId: number,
-    updateUserDto: UpdateUserDto
+    userId: string,
+    updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
     await this.findOne(userId);
 
     const { password, ...userData } = updateUserDto;
-    let updateData: any = userData;
+    let updateData: import('@prisma/client').Prisma.UserUpdateInput = userData;
 
     if (password) {
       const saltRounds = 10;
@@ -74,7 +76,7 @@ export class UsersService {
     return updatedUser;
   }
 
-  async remove(userId: number): Promise<void> {
+  async remove(userId: string): Promise<void> {
     await this.findOne(userId);
 
     await this.prisma.user.delete({

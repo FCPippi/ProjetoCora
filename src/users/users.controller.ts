@@ -9,14 +9,14 @@ import {
   HttpStatus,
   HttpCode,
   UseGuards,
-} from "@nestjs/common";
-import { UsersService } from "./users.service";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import { UserResponseDto } from "./dto/user-response.dto";
-import { JwtAuthGuard } from "../auth/jwt-auth.guard";
-import { GetUserId } from "../auth/get-user.decorator";
+} from '@nestjs/common';
+import { UsersService } from './users.service';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserResponseDto } from './dto/user-response.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { GetUserId } from '../auth/get-user.decorator';
 
-@Controller("users")
+@Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -26,22 +26,22 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(":id")
+  @Get(':id')
   async getUserById(
-    @Param("id", ParseIntPipe) id: number
+    @Param('id', ParseIntPipe) id: string,
   ): Promise<UserResponseDto> {
     return this.usersService.findOne(id);
   }
 
-  @Put("profile")
+  @Put('profile')
   async updateProfile(
     @GetUserId() userId: number,
-    @Body() updateUserDto: UpdateUserDto
+    @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
     return this.usersService.update(userId, updateUserDto);
   }
 
-  @Delete("profile")
+  @Delete('profile')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteProfile(@GetUserId() userId: number): Promise<void> {
     return this.usersService.remove(userId);
